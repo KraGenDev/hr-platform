@@ -6,7 +6,7 @@
         <form th:action="@{/department/add}" th:object="${department}" method="post" class="form">
             <div style="display: flex; align-items: center;">
                 <label for="name" style="margin-right: 10px;">Назва відділу</label>
-                <input type="text" th:field="*{name}" required style="flex: 1; margin-right: 10px;"/>
+                <input type="text" MAXLENGTH="20" th:field="*{name}" required style="flex: 1; margin-right: 10px;"/>
                 <button type="submit" class="button">Додати</button>
             </div>
         </form>
