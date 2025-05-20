@@ -1,0 +1,35 @@
+<div th:fragment="body">
+    <div class="content-wrapper">
+        <h3>Додати відділ</h3>
+
+        <!-- Форма для додавання нового відділу -->
+        <form th:action="@{/department/add}" th:object="${department}" method="post" class="form">
+            <div style="display: flex; align-items: center;">
+                <label for="name" style="margin-right: 10px;">Назва відділу</label>
+                <input type="text" MAXLENGTH="20" th:field="*{name}" required style="flex: 1; margin-right: 10px;"/>
+                <button type="submit" class="button">Додати</button>
+            </div>
+        </form>
+
+        <!-- Список відділів -->
+        <h3>Існуючі відділи</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Назва відділу</th>
+                <th>Дії</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="department : ${departments}">
+                <td th:text="${department.name}"></td>
+                <td>
+                    <form th:action="@{/department/delete/{id}(id=${department.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="button">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

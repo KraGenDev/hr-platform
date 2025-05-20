@@ -1,0 +1,41 @@
+<div th:fragment="body">
+  <div class="content-wrapper">
+    <h2>Додати працівника</h2>
+    <form th:action="@{/employees/new}" th:object="${employee}" method="post" class="form">
+      <div>
+        <label>Ім’я</label>
+        <input type="text" th:field="*{firstName}" required />
+      </div>
+      <div>
+        <label>Прізвище</label>
+        <input type="text" th:field="*{lastName}" required />
+      </div>
+      <div>
+        <label>Email</label>
+        <input type="email" th:field="*{email}" required />
+      </div>
+      <div>
+        <label>Телефон</label>
+        <input type="text" th:field="*{phone}" required />
+      </div>
+
+      <!-- Посада -->
+      <div>
+        <label for="position">Посада</label> <!-- Текст для посади -->
+        <select th:field="*{position.id}" required>
+          <option th:each="pos : ${positions}" th:value="${pos.id}" th:text="${pos.name}"></option>
+        </select>
+      </div>
+
+      <!-- Відділ -->
+      <div>
+        <label for="department">Відділ</label> <!-- Текст для відділу -->
+        <select th:field="*{department.id}" required>
+          <option th:each="dep : ${departments}" th:value="${dep.id}" th:text="${dep.name}"></option>
+        </select>
+      </div>
+
+      <button type="submit" class="button">Зберегти</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+<div th:fragment="body">
+    <div class="form" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Список працівників</h2>
+        <a class="button" th:href="@{/employees/new}" style="white-space: nowrap; margin-left: auto;">Додати працівника</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Ім’я</th>
+            <th>Прізвище</th>
+            <th>Email</th>
+            <th>Телефон</th>
+            <th>Посада</th>
+            <th>Відділ</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.firstName}"></td>
+            <td th:text="${employee.lastName}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.phone}"></td>
+            <td th:text="${employee.position.name}"></td>
+            <td th:text="${employee.department.name}"></td>
+            <td>
+                <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="button">Редагувати</a>
+                <form th:action="@{/employees/delete/{id}(id=${employee.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="button">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
