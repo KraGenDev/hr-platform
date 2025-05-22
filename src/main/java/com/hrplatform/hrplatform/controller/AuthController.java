@@ -14,8 +14,12 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Value("${REMOVED_SECRET}")
+    @Value("${KEYCLOAK_CLIENT_SECRET}")
     private String clientSecret;
+
+    @Value("${KEYCLOAK_CLIENT_ID}")
+    private String clientId;
+
 
     @PostMapping("/token")
     public ResponseEntity<String> getToken(@RequestBody LoginRequest loginRequest) {
@@ -23,7 +27,7 @@ public class AuthController {
 
         Map<String, String> bodyParams = new HashMap<>();
         bodyParams.put("grant_type", "password");
-        bodyParams.put("client_id", "***REMOVED***");
+        bodyParams.put("client_id", clientId);
         bodyParams.put("client_secret", clientSecret);
         bodyParams.put("username", loginRequest.getUsername());
         bodyParams.put("password", loginRequest.getPassword());
