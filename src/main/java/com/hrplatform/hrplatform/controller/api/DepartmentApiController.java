@@ -28,20 +28,20 @@ public class DepartmentApiController {
 
 
     @Operation(summary = "Отримати всі відділи", description = "Повертає список усіх існуючих відділів у системі.")
-    @GetMapping
+    @GetMapping("/getAll")
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
 
     @Operation(summary = "Створити новий відділ", description = "Створення нового відділу та додавання його в БД.")
-    @PostMapping
+    @PostMapping("/new")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public Department addDepartment(@RequestBody Department department) {
         return departmentRepository.save(department);
     }
 
     @Operation(summary = "Видалити відділ", description = "Видаляє відділ за вказаним ID.")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/dellete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
         if (!departmentRepository.existsById(id)) {

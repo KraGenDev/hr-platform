@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/employees")
 @Tag(name = "Employees API", description = "Операції з працівниками")
 public class EmployeeApiController {
 
@@ -34,7 +34,7 @@ public class EmployeeApiController {
 
 
     @Operation(summary = "Отримати список працівників", description = "Повертає список усіх працівників.")
-    @GetMapping("/employees")
+    @GetMapping("/getAll")
     public List<EmployeeDTO> getAllEmployees() {
 
         List<EmployeeDTO> employees = new ArrayList<>();
@@ -62,7 +62,7 @@ public class EmployeeApiController {
 
 
     @Operation(summary = "Створити нового працівника", description = "Додає нового працівника в систему.")
-    @PostMapping
+    @PostMapping("/new")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public Employee createEmployee(@RequestBody Employee employee) {
         validateAndSetPositionAndDepartment(employee);
@@ -70,24 +70,30 @@ public class EmployeeApiController {
     }
 
     @Operation(summary = "Оновити працівника", description = "Оновлює дані існуючого працівника за ID.")
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         validateAndSetStringUserValues(existingEmployee, employee);
-        validateAndSetPositionAndDepartmentForUpdate(existingEmployee, employee);
+
+        try{
+            validateAndSetPositionAndDepartmentForUpdate(existingEmployee, employee);
+        }
+        catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
+        }
 
         return employeeRepository.save(existingEmployee);
     }
 
     @Operation(summary = "Видалити працівника", description = "Видаляє працівника з системи за його ID.")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         if (!employeeRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Працівника з ID " + id + " не знайдено.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Працівника не знайдено");
         }
         employeeRepository.deleteById(id);
 
@@ -95,7 +101,7 @@ public class EmployeeApiController {
     }
 
     private void validateAndSetPositionAndDepartment(Employee employee) {
-        if (employee.getPositionId() != 0) {
+        if (employee.getPositionId() != null) {
             Position position = positionRepository.findById(employee.getPositionId())
                     .orElseThrow(() -> new RuntimeException("Посаду не знайдено"));
             employee.setPositionId(position != null
@@ -103,7 +109,7 @@ public class EmployeeApiController {
                     : 0);
         }
 
-        if (employee.getDepartmentId() != 0) {
+        if (employee.getDepartmentId() != null) {
             Department department = departmentRepository.findById(employee.getDepartmentId())
                     .orElseThrow(() -> new RuntimeException("Відділ не знайдено"));
             employee.setDepartmentId(department != null ? department.getId() : 0);
@@ -126,7 +132,7 @@ public class EmployeeApiController {
     }
 
     private void validateAndSetPositionAndDepartmentForUpdate(Employee existing, Employee updated) {
-        if (updated.getPositionId() != 0) {
+        if (updated.getPositionId() != null && updated.getPositionId() != 0) {
             Position position = positionRepository.findById(updated.getPositionId())
                     .orElseThrow(() -> new RuntimeException("Посаду не знайдено"));
             existing.setPositionId(position != null
@@ -134,7 +140,7 @@ public class EmployeeApiController {
                     : 0);
         }
 
-        if (updated.getDepartmentId() != 0) {
+        if (updated.getDepartmentId() != null && updated.getDepartmentId() != 0) {
             Department department = departmentRepository.findById(updated.getDepartmentId())
                     .orElseThrow(() -> new RuntimeException("Відділ не знайдено"));
             existing.setDepartmentId(department != null

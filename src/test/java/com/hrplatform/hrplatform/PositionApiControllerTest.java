@@ -6,6 +6,8 @@ import com.hrplatform.hrplatform.repository.EmployeeRepository;
 import com.hrplatform.hrplatform.repository.PositionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,9 +75,12 @@ class PositionApiControllerTest {
 
         when(positionRepository.existsById(id)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> controller.deletePosition(id));
-        assertEquals("Position not found", exception.getMessage());
+        ResponseEntity<String> response = controller.deletePosition(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody().contains("не знайдено"));
     }
+
 
     @Test
     void testDeletePosition_InUse() {
@@ -84,7 +89,9 @@ class PositionApiControllerTest {
         when(positionRepository.existsById(id)).thenReturn(true);
         when(employeeRepository.existsByPositionId(id)).thenReturn(true);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> controller.deletePosition(id));
-        assertEquals("Cannot delete position: it is used by employees", exception.getMessage());
+        ResponseEntity<String> response = controller.deletePosition(id);
+
+        assertEquals(409, response.getStatusCodeValue());
+        assertTrue(response.getBody().contains("використовується"));
     }
 }

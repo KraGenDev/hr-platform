@@ -27,44 +27,28 @@ public class PositionApiController {
     private EmployeeRepository employeeRepository;
 
     @Operation(summary = "Отримати всі посади", description = "Повертає список усіх посад у системі.")
-    @GetMapping
+    @GetMapping("/getAll")
     public List<Position> listPositions() {
         return positionRepository.findAll();
     }
 
     @Operation(summary = "Додати нову посаду", description = "Створює нову посаду та зберігає її в базу даних.")
-    @PostMapping
+    @PostMapping("/new")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public Position addPosition(@RequestBody Position position) {
         return positionRepository.save(position);
     }
 
-//    @Operation(summary = "Видалити посаду", description = "Видаляє посаду за вказаним ID.")
-//    @DeleteMapping("/{id}")
-//    @PreAuthorize("hasAnyRole('ADMIN')")
-//    public void deletePosition(@PathVariable Long id) {
-//        if (!positionRepository.existsById(id)) {
-//            throw new RuntimeException("Position not found");
-//        }
-//
-//        boolean isInUse = employeeRepository.existsByPositionId(id);
-//        if (isInUse) {
-//            throw new RuntimeException("Cannot delete position: it is used by employees");
-//        }
-//
-//        positionRepository.deleteById(id);
-//
-//    }
 
     @Operation(summary = "Видалити посаду", description = "Видаляє посаду за вказаним ID.")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
+    public ResponseEntity<String> deletePosition(@PathVariable Long id) {
         if (!positionRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Посада з ID " + id + " не знайдена.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Посаду з ID " + id + " не знайдено");
         }
 
-        if (employeeRepository.existsByDepartmentId(id)) {
+        if (employeeRepository.existsByPositionId(id)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Неможливо видалити посаду, оскільки вона використовується працівниками.");
         }
 

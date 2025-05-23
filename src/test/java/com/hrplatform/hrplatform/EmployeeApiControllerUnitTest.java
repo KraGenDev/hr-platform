@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,8 +55,8 @@ class EmployeeApiControllerUnitTest {
         employee.setLastName("User");
         employee.setEmail("test@example.com");
         employee.setPhone("123456789");
-        employee.setPosition(position);
-        employee.setDepartment(department);
+        employee.setPositionId(position.getId());
+        employee.setDepartmentId(department.getId());
     }
 
     @Test
@@ -176,10 +177,11 @@ class EmployeeApiControllerUnitTest {
 
     @Test
     void testDeleteEmployee_NotFound() {
-        // Arrange
+
         when(employeeRepository.existsById(1L)).thenReturn(false);
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> employeeApiController.deleteEmployee(1L));
+        ResponseEntity<String> response =employeeApiController.deleteEmployee(1L);
+
+        assertTrue(response.getBody().contains("не знайдено"));
     }
 }
