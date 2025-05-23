@@ -13,11 +13,10 @@ public class Employee {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @ManyToOne
-    private Position position;
 
-    @ManyToOne
-    private Department department;
+    private Long positionId;
+
+    private Long departmentId;
 
     private String firstName;
     private String lastName;

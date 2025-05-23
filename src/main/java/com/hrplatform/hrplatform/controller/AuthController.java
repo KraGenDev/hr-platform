@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/token")
     public ResponseEntity<String> getToken(@RequestBody LoginRequest loginRequest) {
-        String url = "http://host.docker.internal:8080/realms/hrPlatform/protocol/openid-connect/token";
+        String url = "http://localhost:8080/realms/hrPlatform/protocol/openid-connect/token";
 
         Map<String, String> bodyParams = new HashMap<>();
         bodyParams.put("grant_type", "password");

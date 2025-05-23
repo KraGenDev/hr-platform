@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,20 +39,37 @@ public class PositionApiController {
         return positionRepository.save(position);
     }
 
+//    @Operation(summary = "Видалити посаду", description = "Видаляє посаду за вказаним ID.")
+//    @DeleteMapping("/{id}")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    public void deletePosition(@PathVariable Long id) {
+//        if (!positionRepository.existsById(id)) {
+//            throw new RuntimeException("Position not found");
+//        }
+//
+//        boolean isInUse = employeeRepository.existsByPositionId(id);
+//        if (isInUse) {
+//            throw new RuntimeException("Cannot delete position: it is used by employees");
+//        }
+//
+//        positionRepository.deleteById(id);
+//
+//    }
+
     @Operation(summary = "Видалити посаду", description = "Видаляє посаду за вказаним ID.")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public void deletePosition(@PathVariable Long id) {
+    public ResponseEntity<String> deleteDepartment(@PathVariable Long id) {
         if (!positionRepository.existsById(id)) {
-            throw new RuntimeException("Position not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Посада з ID " + id + " не знайдена.");
         }
 
-        boolean isInUse = employeeRepository.existsByPositionId(id);
-        if (isInUse) {
-            throw new RuntimeException("Cannot delete position: it is used by employees");
+        if (employeeRepository.existsByDepartmentId(id)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Неможливо видалити посаду, оскільки вона використовується працівниками.");
         }
 
         positionRepository.deleteById(id);
+        return ResponseEntity.ok("Посаду успішно видалено.");
     }
 
 }

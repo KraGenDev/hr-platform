@@ -82,8 +82,8 @@ public class EmployeeWebController {
         existingEmployee.setLastName(updatedEmployee.getLastName());
         existingEmployee.setEmail(updatedEmployee.getEmail());
         existingEmployee.setPhone(updatedEmployee.getPhone());
-        existingEmployee.setPosition(updatedEmployee.getPosition());
-        existingEmployee.setDepartment(updatedEmployee.getDepartment());
+        existingEmployee.setPositionId(updatedEmployee.getPositionId());
+        existingEmployee.setDepartmentId(updatedEmployee.getDepartmentId());
 
         // Зберігаємо зміни
         employeeRepository.save(existingEmployee);
