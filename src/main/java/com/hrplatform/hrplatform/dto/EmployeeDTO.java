@@ -2,7 +2,9 @@ package com.hrplatform.hrplatform.dto;
 
 import com.hrplatform.hrplatform.model.Employee;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 public class EmployeeDTO {
     private Long id;

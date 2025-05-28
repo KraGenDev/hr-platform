@@ -13,7 +13,6 @@ public class Employee {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-
     private Long positionId;
 
     private Long departmentId;

@@ -1,6 +1,7 @@
 package com.hrplatform.hrplatform;
 
 import com.hrplatform.hrplatform.controller.api.EmployeeApiController;
+import com.hrplatform.hrplatform.dto.EmployeeDTO;
 import com.hrplatform.hrplatform.model.Employee;
 import com.hrplatform.hrplatform.model.Position;
 import com.hrplatform.hrplatform.model.Department;
@@ -113,7 +114,7 @@ class EmployeeApiControllerUnitTest {
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
 
         // Act
-        Employee foundEmployee = employeeApiController.getEmployeeById(1L);
+        EmployeeDTO foundEmployee = employeeApiController.getEmployeeById(1L);
 
         // Assert
         assertNotNull(foundEmployee);

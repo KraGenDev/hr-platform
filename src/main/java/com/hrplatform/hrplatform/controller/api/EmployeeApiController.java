@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,14 +40,7 @@ public class EmployeeApiController {
 
         List<EmployeeDTO> employees = new ArrayList<>();
         for (Employee employee : employeeRepository.findAll()) {
-
-            EmployeeDTO employeeDTO = new EmployeeDTO(employee);
-            Department department = departmentRepository.findById(employee.getDepartmentId()).orElse(null);
-            Position position = positionRepository.findById(employee.getPositionId()).orElse(null);
-
-            employeeDTO.setDepartment(department != null ? department.getName() : "Відсутній");
-            employeeDTO.setPosition(position != null ? position.getName() : "Відсутня");
-            employees.add(employeeDTO);
+            employees.add(createEmployeeDTO(employee));
         }
 
         return employees;
@@ -55,9 +49,9 @@ public class EmployeeApiController {
     @Operation(summary = "Отримати працівника за ID", description = "Повертає одного працівника за його унікальним ідентифікатором.")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public Employee getEmployeeById(@PathVariable Long id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Працівника не знайдено."));
+    public EmployeeDTO getEmployeeById(@PathVariable Long id) {
+        var employee = employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Працівника не знайдено."));
+        return createEmployeeDTO(employee);
     }
 
 
@@ -104,29 +98,27 @@ public class EmployeeApiController {
         if (employee.getPositionId() != null) {
             Position position = positionRepository.findById(employee.getPositionId())
                     .orElseThrow(() -> new RuntimeException("Посаду не знайдено"));
-            employee.setPositionId(position != null
-                    ? position.getId()
-                    : 0);
+            employee.setPositionId(position.getId());
         }
 
         if (employee.getDepartmentId() != null) {
             Department department = departmentRepository.findById(employee.getDepartmentId())
                     .orElseThrow(() -> new RuntimeException("Відділ не знайдено"));
-            employee.setDepartmentId(department != null ? department.getId() : 0);
+            employee.setDepartmentId(department.getId());
         }
     }
 
     private void validateAndSetStringUserValues(Employee employee, Employee updatedEmployee) {
-        if(updatedEmployee.getFirstName() != null && !updatedEmployee.getFirstName().equals("string")) {
+        if(updatedEmployee.getFirstName() != null) {
             employee.setFirstName(updatedEmployee.getFirstName());
         }
-        if(updatedEmployee.getLastName() != null && !updatedEmployee.getLastName().equals("string")) {
+        if(updatedEmployee.getLastName() != null) {
             employee.setLastName(updatedEmployee.getLastName());
         }
-        if(updatedEmployee.getEmail() != null && !updatedEmployee.getEmail().equals("string")) {
+        if(updatedEmployee.getEmail() != null) {
             employee.setEmail(updatedEmployee.getEmail());
         }
-        if(updatedEmployee.getPhone() != null && !updatedEmployee.getPhone().equals("string")) {
+        if(updatedEmployee.getPhone() != null) {
             employee.setPhone(updatedEmployee.getPhone());
         }
     }
@@ -135,17 +127,25 @@ public class EmployeeApiController {
         if (updated.getPositionId() != null && updated.getPositionId() != 0) {
             Position position = positionRepository.findById(updated.getPositionId())
                     .orElseThrow(() -> new RuntimeException("Посаду не знайдено"));
-            existing.setPositionId(position != null
-                    ? position.getId()
-                    : 0);
+            existing.setPositionId(position.getId());
         }
 
         if (updated.getDepartmentId() != null && updated.getDepartmentId() != 0) {
             Department department = departmentRepository.findById(updated.getDepartmentId())
                     .orElseThrow(() -> new RuntimeException("Відділ не знайдено"));
-            existing.setDepartmentId(department != null
-                    ? department.getId()
-                    : 0);
+            existing.setDepartmentId(department.getId());
         }
+    }
+
+
+    private EmployeeDTO createEmployeeDTO(Employee employee) {
+        EmployeeDTO employeeDTO = new EmployeeDTO(employee);
+        Department department = departmentRepository.findById(employee.getDepartmentId()).orElse(null);
+        Position position = positionRepository.findById(employee.getPositionId()).orElse(null);
+
+        employeeDTO.setDepartment(department != null ? department.getName() : "Відсутній");
+        employeeDTO.setPosition(position != null ? position.getName() : "Відсутня");
+
+        return employeeDTO;
     }
 }
