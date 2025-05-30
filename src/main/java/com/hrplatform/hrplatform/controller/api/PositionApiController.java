@@ -1,5 +1,6 @@
 package com.hrplatform.hrplatform.controller.api;
 
+import com.hrplatform.hrplatform.dto.UpdateNameRequestDTO;
 import com.hrplatform.hrplatform.model.Position;
 import com.hrplatform.hrplatform.repository.EmployeeRepository;
 import com.hrplatform.hrplatform.repository.PositionRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/positions")
@@ -55,5 +57,28 @@ public class PositionApiController {
         positionRepository.deleteById(id);
         return ResponseEntity.ok("Посаду успішно видалено.");
     }
+
+    @Operation(summary = "Оновити посаду", description = "Оновлює назву посади за вказаним ID.")
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<Object> updatePosition(@PathVariable Long id, @RequestBody UpdateNameRequestDTO request) {
+        if (positionRepository.existsByNameIgnoreCase(request.getName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Посада з назвою '" + request.getName() + "' вже існує.");
+        }
+
+        Optional<Position> optionalPosition = positionRepository.findById(id);
+        if (optionalPosition.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Посаду з ID " + id + " не знайдено");
+        }
+
+        Position position = optionalPosition.get();
+        position.setName(request.getName());
+        positionRepository.save(position);
+
+        return ResponseEntity.ok(position);
+    }
+
 
 }
