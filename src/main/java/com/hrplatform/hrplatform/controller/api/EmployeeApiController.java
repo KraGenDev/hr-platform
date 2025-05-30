@@ -94,6 +94,18 @@ public class EmployeeApiController {
         return ResponseEntity.ok("Працівника успішно видалено.");
     }
 
+    @Operation(summary = "Пошук працівників", description = "Шукає працівників за ім’ям, прізвищем, email, телефоном, відділом або посадою")
+    @GetMapping("/search")
+    public List<EmployeeDTO> searchEmployees(@RequestParam String keyword) {
+        List<Employee> employees = employeeRepository.searchAllFields(keyword);
+        List<EmployeeDTO> result = new ArrayList<>();
+        for (Employee employee : employees) {
+            result.add(createEmployeeDTO(employee));
+        }
+        return result;
+    }
+
+
     private void validateAndSetPositionAndDepartment(Employee employee) {
         if (employee.getPositionId() != null) {
             Position position = positionRepository.findById(employee.getPositionId())
