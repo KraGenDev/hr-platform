@@ -22,7 +22,5 @@ public class Position {
         this.name = name;
     }
 
-    public Position() {
-
-    }
+    public Position() {}
 }

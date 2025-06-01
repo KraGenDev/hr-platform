@@ -4,7 +4,6 @@ import com.hrplatform.hrplatform.model.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -23,10 +22,13 @@ public class AuthController {
     @Value("${KEYCLOAK_CLIENT_ID}")
     private String clientId;
 
+    @Value("${APP_HOST}")
+    private String appHost;
+
     @Operation(summary = "Авторизація", description = "Отримання токену для авторизації в API")
     @PostMapping("/token")
     public ResponseEntity<String> getToken(@RequestBody LoginRequest loginRequest) {
-        String url = "http://host.docker.internal:8080/realms/hrPlatform/protocol/openid-connect/token";
+        String url = "http://"+appHost+":8080/realms/hrPlatform/protocol/openid-connect/token";
 
         Map<String, String> bodyParams = new HashMap<>();
         bodyParams.put("grant_type", "password");

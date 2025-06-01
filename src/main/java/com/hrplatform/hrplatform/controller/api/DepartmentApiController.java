@@ -2,7 +2,6 @@ package com.hrplatform.hrplatform.controller.api;
 
 import com.hrplatform.hrplatform.dto.UpdateNameRequestDTO;
 import com.hrplatform.hrplatform.model.Department;
-import com.hrplatform.hrplatform.model.Position;
 import com.hrplatform.hrplatform.repository.DepartmentRepository;
 import com.hrplatform.hrplatform.repository.EmployeeRepository;
 import io.swagger.v3.oas.annotations.Operation;
